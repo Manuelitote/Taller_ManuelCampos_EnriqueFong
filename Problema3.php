@@ -1,5 +1,5 @@
 <?php require_once 'validaciones.php'; // Incluye funciones de validación 
-require_once 'Navegacion.php';?>?>
+require_once 'Navegacion.php';?>
 <!DOCTYPE html>
 <html lang="es">
 <head>

@@ -14,14 +14,12 @@ require_once 'Navegacion.php';
 </head>
 <body>
     <div class="container">
-        <h2>Problema #6</h2>
-        <p>Calcular presupuesto del hospital</p>
-
+        <h2>Problema #7</h2>
         <form method="POST">
             <label>¿Cuántas notas desea ingresar?</label>
             <input type="number" name="cantidad" min="1" max="50" required placeholder="Ej: 5">
             <button type="submit">Continuar</button>
-        </form>';
+        </form>
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['cantidad']) && !isset($_POST['cantidad_notas'])) {

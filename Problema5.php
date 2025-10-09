@@ -1,4 +1,4 @@
-<?php 
+<?php  
 require_once 'Navegacion.php';
 require_once 'validaciones.php'; 
 ?>
@@ -28,7 +28,7 @@ if (isset($_POST['procesar'])) {
     $categorias = ["Niño" => 0, "Adolescente" => 0, "Adulto" => 0, "Adulto mayor" => 0];
     $edades = [];
 
-    // Clasificación de edades
+    // Clasificación de edades 
     for ($i=1; $i<=5; $i++) {
         $edad = $_POST["edad$i"];
         if (!validarNumeroNoNegativo($edad)) {
@@ -37,10 +37,20 @@ if (isset($_POST['procesar'])) {
         }
         $edades[] = $edad;
 
-        if ($edad <= 12) $categorias["Niño"]++;
-        elseif ($edad <= 17) $categorias["Adolescente"]++;
-        elseif ($edad <= 64) $categorias["Adulto"]++;
-        else $categorias["Adulto mayor"]++;
+        switch (true) {
+            case ($edad <= 12):
+                $categorias["Niño"]++;
+                break;
+            case ($edad <= 17):
+                $categorias["Adolescente"]++;
+                break;
+            case ($edad <= 64):
+                $categorias["Adulto"]++;
+                break;
+            default:
+                $categorias["Adulto mayor"]++;
+                break;
+        }
     }
 
     // Muestra resultados por categoría

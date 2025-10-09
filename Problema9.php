@@ -13,7 +13,7 @@ require_once 'Navegacion.php';
 <body>
     <div class="container">
         <h2>Problema #9</h2>
-        <p>GCalcular las 15 primeras potencias del número </p>
+        <p>Calcular las 15 primeras potencias del número </p>
 
     <form method="POST">
         <label>Ingrese un número del 1 al 9:</label>
