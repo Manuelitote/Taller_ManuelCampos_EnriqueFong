@@ -1,5 +1,5 @@
 <?php 
-// Incluye las funciones de validación
+require_once 'Navegacion.php';
 require_once 'validaciones.php'; 
 ?>
 <!DOCTYPE html>
@@ -89,8 +89,8 @@ if (isset($_POST['procesar'])) {
     </script>
     ";
 }
+Navegacion::volverAlMenu();
 ?>
-<p><a href="index.php">← Volver al menú principal</a></p>
 </div>
 <?php include 'footer.php'; ?>
 </body>

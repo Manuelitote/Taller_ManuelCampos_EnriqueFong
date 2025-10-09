@@ -1,3 +1,5 @@
+<?php require_once 'validaciones.php'; // Incluye las funciones de validación 
+require_once 'Navegacion.php';?>
 <!DOCTYPE html> 
 <html lang="es">
 <head>
@@ -26,8 +28,9 @@ if (isset($_POST['calcular'])) {
     // Muestra el resultado
     echo "<h3>Resultado:</h3> La suma de los números del 1 al 1000 es: <strong>$suma</strong>";
 }
+Navegacion::volverAlMenu();
 ?>
-<p><a href="index.php">← Volver al menú principal</a></p>
+
 </div>
 <?php include 'footer.php'; // Incluye el pie de página ?>
 </body>

@@ -1,3 +1,4 @@
+<?php require_once 'Navegacion.php';?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -29,8 +30,8 @@ if (isset($_POST['calcular'])) {
     echo "Suma de pares: $sumaPares<br>";
     echo "Suma de impares: $sumaImpares<br>";
 }
+Navegacion::volverAlMenu();
 ?>
-<p><a href="index.php">← Volver al menú principal</a></p>
 </div>
 <?php include 'footer.php'; // Incluye el pie de página ?>
 </body>

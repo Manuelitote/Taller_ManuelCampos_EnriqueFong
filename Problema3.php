@@ -1,4 +1,5 @@
-<?php require_once 'validaciones.php'; // Incluye funciones de validación ?>
+<?php require_once 'validaciones.php'; // Incluye funciones de validación 
+require_once 'Navegacion.php';?>?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -31,8 +32,8 @@ if (isset($_POST['calcular'])) {
         }
     }
 }
+Navegacion::volverAlMenu();
 ?>
-<p><a href="index.php">← Volver al menú principal</a></p>
 </div>
 <?php include 'footer.php'; // Incluye el pie de página ?>
 </body>

@@ -1,4 +1,6 @@
-<?php require_once 'validaciones.php'; // Incluye las funciones de validación ?>
+<?php
+require_once 'Navegacion.php';
+require_once 'Estadistica.php'?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -21,32 +23,56 @@
 
 <?php
 // Procesa los datos al enviar el formulario
-if (isset($_POST['calcular'])) {
-    $nums = [];
-    // Valida y almacena los números ingresados
-    for ($i=1; $i<=5; $i++) {
-        $valor = $_POST["num$i"];
-        if (!validarNumeroNoNegativo($valor)) {
-            echo "<p style='color:red;'>Solo se permiten números mayores o iguales a 0.</p>";
-            exit;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $numbers = [
+        floatval($_POST['num1']),
+        floatval($_POST['num2']),
+        floatval($_POST['num3']),
+        floatval($_POST['num4']),
+        floatval($_POST['num5'])
+    ];
+    
+    $allPositive = true;
+    foreach ($numbers as $num) {
+        if ($num <= 0) {
+            $allPositive = false;
+            break;
         }
-        $nums[] = (float)$valor;
     }
-
-    // Calcula media, mínimo, máximo y desviación estándar
-    $media = array_sum($nums) / count($nums);
-    $min = min($nums);
-    $max = max($nums);
-    $sumatoria = 0;
-    foreach ($nums as $n) $sumatoria += pow($n - $media, 2);
-    $desv = sqrt($sumatoria / count($nums));
-
-    // Muestra los resultados
-    echo "<h3>Resultados:</h3>";
-    echo "Media: $media <br>Desviación estándar: $desv <br>Mínimo: $min <br>Máximo: $max";
+    
+    if ($allPositive) {
+        $media = Estadisticas::calcularMedia($numbers);
+        $stdDev = Estadisticas::calcularDesviacionEstandar($numbers);
+        $min = Estadisticas::obtenerMinimo($numbers);
+        $max = Estadisticas::obtenerMaximo($numbers);
+        
+        echo '<div class="container">
+                <h2>📊 Resultados</h2>
+                <div class="stat">
+                    <span class="stat-label">Media:</span>
+                    <span class="stat-value">' . number_format($media, 2) . '</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Desviación Estándar:</span>
+                    <span class="stat-value">' . number_format($stdDev, 2) . '</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Mínimo:</span>
+                    <span class="stat-value">' . number_format($min, 2) . '</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Máximo:</span>
+                    <span class="stat-value">' . number_format($max, 2) . '</span>
+                </div>
+              </div>';
+    } else {
+        echo '<div style="background: #fff5f5; border-left: 4px solid #fc8181; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                <strong>❌ Error:</strong> Todos los números deben ser positivos.
+              </div>';
+    }
 }
+Navegacion::volverAlMenu();
 ?>
-<p><a href="index.php">← Volver al menú principal</a></p>
 </div>
 <?php include 'footer.php'; // Incluye el pie de página ?>
 </body>
