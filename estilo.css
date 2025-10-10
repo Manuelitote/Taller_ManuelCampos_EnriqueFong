@@ -13,8 +13,19 @@ body {
     border-radius: 12px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
     width: 50%;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
-
+.container1 {
+    background-color: #fff;
+    margin: 50px auto;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    width: 50%;
+}
 h1, h2 {
     color: #2e4053;
 }

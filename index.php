@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="estilo.css"> <!-- Vincula el archivo CSS para estilos -->
 </head>
 <body>
-<div class="container">
+<div class="container1">
     <h1>MiniProyecto 1 - Menú Principal</h1>
     <h2>Selecciona un problema para ejecutar:</h2>
 
