@@ -1,6 +1,6 @@
 <?php
 
-class OperacionesMatematicas
+class Operaciones
 {
     public static function obtenerPotencias($base, $cantidad)
     {

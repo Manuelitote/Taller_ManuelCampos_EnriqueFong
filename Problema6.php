@@ -1,5 +1,5 @@
 <?php
-require_once 'OperacionesMatematicas.php';
+require_once 'Operaciones.php';
 require_once 'Navegacion.php';
 ?>
 
@@ -28,7 +28,7 @@ require_once 'Navegacion.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $presupuestoTotal = floatval($_POST['presupuesto']);
     // Llama la funcionb estatica de la clase externa
-    $distribucion = OperacionesMatematicas::calcularDistribucion($presupuestoTotal);
+    $distribucion = Operaciones::calcularDistribucion($presupuestoTotal);
 
     if ($distribucion) { // Imprime la tabla con lso resultados
         echo '<div>

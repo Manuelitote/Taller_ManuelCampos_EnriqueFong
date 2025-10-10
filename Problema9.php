@@ -1,5 +1,5 @@
 <?php
-require_once 'OperacionesMatematicas.php';
+require_once 'Operaciones.php';
 require_once 'Navegacion.php';
 ?>
 
@@ -26,7 +26,7 @@ require_once 'Navegacion.php';
     $numero = intval($_POST['numero']);
     
     if ($numero >= 1 && $numero <= 9) {
-        $potencias = OperacionesMatematicas::obtenerPotencias($numero, 15);
+        $potencias = Operaciones::obtenerPotencias($numero, 15);
         
 
      // Imprime la tabla con los resultados

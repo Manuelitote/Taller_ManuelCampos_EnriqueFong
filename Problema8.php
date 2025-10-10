@@ -1,5 +1,5 @@
 <?php
-require_once 'CalculadoraEstaciones.php';
+require_once 'Estaciones.php';
 require_once 'Navegacion.php';
 ?>
 
@@ -32,7 +32,7 @@ require_once 'Navegacion.php';
 
         // Validar fecha
         if (checkdate($mes, $dia, $año)) {//Se llama la función estática de la clase calculadoraEstaciones
-            $estacion = CalculadoraEstaciones::obtenerEstacion($mes, $dia);
+            $estacion = Estaciones::obtenerEstacion($mes, $dia);
             //Dependiendo del numero para imprimer el nombre del mes
             $nombresMeses = [
                 1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril',
