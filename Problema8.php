@@ -31,15 +31,15 @@ require_once 'Navegacion.php';
         $dia = intval($partesFecha[2]);
 
         // Validar fecha
-        if (checkdate($mes, $dia, $año)) {
+        if (checkdate($mes, $dia, $año)) {//Se llama la función estática de la clase calculadoraEstaciones
             $estacion = CalculadoraEstaciones::obtenerEstacion($mes, $dia);
-
+            //Dependiendo del numero para imprimer el nombre del mes
             $nombresMeses = [
                 1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo', 4 => 'Abril',
                 5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto',
                 9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
             ];
-
+            //Imprime la tabla con el resultado
             echo '<div class="container">
                     <h2>🌍 Resultado</h2>
                     <div>

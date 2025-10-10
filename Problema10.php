@@ -140,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrar_venta'])) {
             <th>Nombre Completo</th>
             <th>Estado</th>
         </tr>
-        <?php
+        <?php //Se reccore los vendedores guardados en la sección y se registra si se hicieron cambios o se ingresaron
         for ($i = 1; $i <= 4; $i++) {
             $vendedor = $_SESSION['vendedores'][$i];
             $nombreCompleto = !empty($vendedor['nombre']) ? 

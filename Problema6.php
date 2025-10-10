@@ -27,10 +27,10 @@ require_once 'Navegacion.php';
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $presupuestoTotal = floatval($_POST['presupuesto']);
-
+    // Llama la funcionb estatica de la clase externa
     $distribucion = OperacionesMatematicas::calcularDistribucion($presupuestoTotal);
 
-    if ($distribucion) {
+    if ($distribucion) { // Imprime la tabla con lso resultados
         echo '<div>
                 <h2>Distribución del Presupuesto</h2>
                 <p><strong>Presupuesto Total: $' . number_format($presupuestoTotal, 2) . '</strong></p>
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </tr>';
 
         $etiquetas = [];
-        $datos = [];
+        $datos = []; //Recorre con foreach cada resultado de la distribuición
         foreach ($distribucion as $item) {
             $etiquetas[] = $item["area"];
             $datos[] = $item["presupuesto"];

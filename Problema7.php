@@ -64,12 +64,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
         
-        if (count($notas) > 0) {
+        if (count($notas) > 0) { //Si se ingresaron notas se llaman las funciones estaticas de la clase Estadisticas
             $promedio = Estadisticas::calcularMedia($notas);
             $desviacion = Estadisticas::calcularDesviacionEstandar($notas);
             $minima = Estadisticas::obtenerMinimo($notas);
             $maxima = Estadisticas::obtenerMaximo($notas);
-            
+            // Se imprime el resultado
             echo '<div>
                     <h2>📊 Resultados Estadísticos</h2>
                     
