@@ -1,5 +1,7 @@
 <?php
 require_once 'Navegacion.php';
+require_once 'validaciones.php'; // Incluir validaciones
+session_start(); // Iniciar sesión para almacenar datos
 ?>
 
 <!DOCTYPE html>
@@ -12,40 +14,109 @@ require_once 'Navegacion.php';
 <body>
     <div class="container">
         <h2>Problema #10</h2>
-        <p>Calcular ventas de vendedores y productos</p>
+        <p>💰 Sistema de Gestión de Ventas</p>
+<!-- Formulario de Registro de Vendedor -->
+<div class="container">
+    <h3>👤 Registrar Vendedor</h3>
+    <form method="POST">
+        <label>Número de Vendedor (1-4):</label>
+        <select name="numero_vendedor" required>
+            <option value="">Seleccione...</option>
+            <?php
+            // Generar opciones con nombres actuales
+            for ($i = 1; $i <= 4; $i++) {
+                $vendedor = $_SESSION['vendedores'][$i];
+                $nombreCompleto = $vendedor['nombre'] . ' ' . $vendedor['apellido'];
+                echo '<option value="' . $i . '">' . $i . ' - ' . sanitizarTexto($nombreCompleto) . '</option>';
+            }
+            ?>
+        </select>
+        
+        <label>Nombre:</label>
+        <input type="text" name="nombre" required placeholder="Ej: Juan">
+        
+        <label>Apellido:</label>
+        <input type="text" name="apellido" required placeholder="Ej: Pérez">
+        
+        <button type="submit" name="registrar_vendedor">Actualizar Vendedor</button>
+    </form>
+</div>
+
+<!-- Formulario de Registro de Venta -->
+<div class="container">
+    <h3>💰 Registrar Venta</h3>
+    <form method="POST">
+        <label>Vendedor:</label>
+        <select name="vendedor" required>
+            <option value="">Seleccione...</option>
+            <?php
+            // Generar opciones de vendedores con nombres
+            for ($i = 1; $i <= 4; $i++) {
+                $vendedor = $_SESSION['vendedores'][$i];
+                $nombreCompleto = $vendedor['nombre'] . ' ' . $vendedor['apellido'];
+                echo '<option value="' . $i . '">' . $i . ' - ' . sanitizarTexto($nombreCompleto) . '</option>';
+            }
+            ?>
+        </select>
+        
+        <label>Producto (1-5):</label>
+        <select name="producto" required>
+            <option value="">Seleccione...</option>
+            <option value="1">Producto 1</option>
+            <option value="2">Producto 2</option>
+            <option value="3">Producto 3</option>
+            <option value="4">Producto 4</option>
+            <option value="5">Producto 5</option>
+        </select>
+        
+        <label>Valor Total de Venta ($):</label>
+        <input type="number" step="0.01" name="valor" min="0.01" required placeholder="Ej: 500.00">
+        
+        <button type="submit" name="registrar_venta">Registrar Venta</button>
+    </form>
+</div>
 
 <?php
-// Inicializar variables de sesión si no existen
-session_start();
 
+// Inicializar variables de sesión si no existen
 if (!isset($_SESSION['ventas'])) {
-    $_SESSION['ventas'] = array_fill(0, 5, array_fill(0, 4, 0)); // 5 productos x 4 vendedores
+    // Matriz 5 productos x 4 vendedores
+    $_SESSION['ventas'] = array_fill(0, 5, array_fill(0, 4, 0));
 }
 
 if (!isset($_SESSION['vendedores'])) {
+    // Datos de vendedores
     $_SESSION['vendedores'] = [
-        1 => ['nombre' => '', 'apellido' => ''],
-        2 => ['nombre' => '', 'apellido' => ''],
-        3 => ['nombre' => '', 'apellido' => ''],
-        4 => ['nombre' => '', 'apellido' => '']
+        1 => ['nombre' => '', 'apellido' => 'Vendedor 1'],
+        2 => ['nombre' => '', 'apellido' => 'Vendedor 2'],
+        3 => ['nombre' => '', 'apellido' => 'Vendedor 3'],
+        4 => ['nombre' => '', 'apellido' => 'Vendedor 4']
     ];
 }
 
 // Procesar formulario de registro de vendedor
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrar_vendedor'])) {
     $numeroVendedor = intval($_POST['numero_vendedor']);
-    $nombre = trim($_POST['nombre']);
-    $apellido = trim($_POST['apellido']);
+    $nombre = sanitizarTexto($_POST['nombre'] ?? '');
+    $apellido = sanitizarTexto($_POST['apellido'] ?? '');
     
-    if ($numeroVendedor >= 1 && $numeroVendedor <= 4 && !empty($nombre) && !empty($apellido)) {
+    // Validar datos del vendedor
+    if (validarEnteroEnRango($numeroVendedor, 1, 4) && 
+        validarNombre($nombre) && 
+        validarNombre($apellido)) {
+        
         $_SESSION['vendedores'][$numeroVendedor] = [
             'nombre' => $nombre,
             'apellido' => $apellido
         ];
         
-        echo '<div class="resultado">
+        echo '<div class="container">
                 <h2>✅ Vendedor Registrado</h2>
                 <p>Vendedor #' . $numeroVendedor . ': ' . $nombre . ' ' . $apellido . '</p>
+              </div>';
+    } else {
+        echo '<div>
+                <strong>❌ Error:</strong> Datos del vendedor no válidos.
               </div>';
     }
 }
@@ -54,121 +125,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrar_vendedor'])
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrar_venta'])) {
     $numeroVendedor = intval($_POST['vendedor']) - 1; // Convertir a índice 0-3
     $numeroProducto = intval($_POST['producto']) - 1; // Convertir a índice 0-4
-    $valorVenta = floatval($_POST['valor']);
+    $valorVenta = $_POST['valor'] ?? '';
     
-    if ($numeroVendedor >= 0 && $numeroVendedor <= 3 && 
-        $numeroProducto >= 0 && $numeroProducto <= 4 && 
-        $valorVenta > 0) {
+    // Validar datos de la venta
+    if (validarEnteroEnRango($numeroVendedor + 1, 1, 4) && 
+        validarEnteroEnRango($numeroProducto + 1, 1, 5) && 
+        validarMontoVenta($valorVenta)) {
         
-        $_SESSION['ventas'][$numeroProducto][$numeroVendedor] += $valorVenta;
+        $_SESSION['ventas'][$numeroProducto][$numeroVendedor] += floatval($valorVenta);
         
-        echo '<div class="resultado">
+        echo '<div class="container">
                 <h2>✅ Venta Registrada</h2>
                 <p>Vendedor #' . ($numeroVendedor + 1) . ' - Producto #' . ($numeroProducto + 1) . ' - $' . number_format($valorVenta, 2) . '</p>
+              </div>';
+    } else {
+        echo '<div>
+                <strong>❌ Error:</strong> Datos de venta no válidos.
               </div>';
     }
 }
 
+// Limpiar datos
+if (isset($_POST['limpiar_datos'])) {
+    $_SESSION['ventas'] = array_fill(0, 5, array_fill(0, 4, 0));
+    $_SESSION['vendedores'] = [
+        1 => ['nombre' => '', 'apellido' => 'Vendedor 1'],
+        2 => ['nombre' => '', 'apellido' => 'Vendedor 2'],
+        3 => ['nombre' => '', 'apellido' => 'Vendedor 3'],
+        4 => ['nombre' => '', 'apellido' => 'Vendedor 4']
+    ];
+
+    echo '<div class="container">
+            <h2>🗑️ Datos Limpiados</h2>
+            <p>Todos los datos han sido reiniciados.</p>
+          </div>';
+}
 ?>
 
+<!-- Tabla de Ventas (Matriz Bidimensional) con nombres de vendedores -->
 <div>
-    <!-- Formulario de Registro de Vendedor -->
-    <div class="container">
-        <h2 style="color: #1e3c72; margin-bottom: 18px;">👤 Registrar Vendedor</h2>
-        <form method="POST" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 25px; border-radius: 15px; border: 1px solid #dee2e6;">
-            <label>Número de Vendedor (1-4):</label>
-            <select name="numero_vendedor" required>
-                <option value="">Seleccione...</option>
-                <option value="1">Vendedor 1</option>
-                <option value="2">Vendedor 2</option>
-                <option value="3">Vendedor 3</option>
-                <option value="4">Vendedor 4</option>
-            </select>
-            
-            <label>Nombre:</label>
-            <input type="text" name="nombre" required>
-            
-            <label>Apellido:</label>
-            <input type="text" name="apellido" required>
-            
-            <button type="submit" name="registrar_vendedor">Registrar Vendedor</button>
-        </form>
-    </div>
-    
-    <!-- Formulario de Registro de Venta -->
-    <div class="container">
-        <h2 style="color: #1e3c72; margin-bottom: 18px;">💰 Registrar Venta</h2>
-        <form method="POST" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 25px; border-radius: 15px; border: 1px solid #dee2e6;">
-            <label>Vendedor:</label>
-            <select name="vendedor" required>
-                <option value="">Seleccione...</option>
-                <?php
-                for ($i = 1; $i <= 4; $i++) {
-                    $vendedor = $_SESSION['vendedores'][$i];
-                    $nombreCompleto = !empty($vendedor['nombre']) ? 
-                        $vendedor['nombre'] . ' ' . $vendedor['apellido'] : 
-                        'Vendedor ' . $i;
-                    echo '<option value="' . $i . '">' . $i . ' - ' . $nombreCompleto . '</option>';
-                }
-                ?>
-            </select>
-            
-            <label>Producto (1-5):</label>
-            <select name="producto" required>
-                <option value="">Seleccione...</option>
-                <option value="1">Producto 1</option>
-                <option value="2">Producto 2</option>
-                <option value="3">Producto 3</option>
-                <option value="4">Producto 4</option>
-                <option value="5">Producto 5</option>
-            </select>
-            
-            <label>Valor Total de Venta ($):</label>
-            <input type="number" step="0.01" name="valor" min="0.01" required placeholder="Ej: 500.00">
-            
-            <button type="submit" name="registrar_venta">Registrar Venta</button>
-        </form>
-    </div>
-</div>
-
-<!-- Listado de Vendedores Registrados -->
-<div class="container">
-    <h3>📋 Vendedores Registrados</h3>
-    <table style="text-align: center;">
+    <h3>📊 Matriz de Ventas del Mes</h3>    
+    <table class="ventas-table">
         <tr>
-            <th>N°</th>
-            <th>Nombre Completo</th>
-            <th>Estado</th>
-        </tr>
-        <?php //Se reccore los vendedores guardados en la sección y se registra si se hicieron cambios o se ingresaron
-        for ($i = 1; $i <= 4; $i++) {
-            $vendedor = $_SESSION['vendedores'][$i];
-            $nombreCompleto = !empty($vendedor['nombre']) ? 
-                $vendedor['nombre'] . ' ' . $vendedor['apellido'] : 
-                '<em style="color: #6c757d;">No registrado</em>';
-            $estado = !empty($vendedor['nombre']) ? '✅ Activo' : '⚠️ Pendiente';
-            
-            echo '<tr>
-                    <td>Vendedor ' . $i . '</td>
-                    <td>' . $nombreCompleto . '</td>
-                    <td>' . $estado . '</td>
-                  </tr>';
-        }
-        ?>
-    </table>
-</div>
-
-<!-- Tabla de Ventas (Arreglo Bidimensional) -->
-<div class="container"">
-    <h2>📊 Matriz de Ventas del Mes</h2>    
-    <table style="text-align: center;">
-        <tr>
-            <th>Producto</th>
-            <th>Vendedor 1</th>
-            <th>Vendedor 2</th>
-            <th>Vendedor 3</th>
-            <th>Vendedor 4</th>
-            <th style="background: #155724; color: white;">TOTAL PRODUCTO</th>
+            <th>Producto / Vendedor</th>
+            <?php
+            // Encabezados con nombres de vendedores
+            for ($i = 1; $i <= 4; $i++) {
+                $vendedor = $_SESSION['vendedores'][$i];
+                $nombreCorto = substr($vendedor['nombre'], 0, 1) . '. ' . $vendedor['apellido'];
+                echo '<th>' . sanitizarTexto($nombreCorto) . '</th>';
+            }
+            ?>
+            <th class="total">TOTAL PRODUCTO</th>
         </tr>
         
         <?php
@@ -190,52 +198,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrar_venta'])) {
                 $totalesPorVendedor[$vendedor] += $valor;
                 $totalGeneral += $valor;
                 
-                $color = $valor > 0 ? '' : 'color: #6c757d;';
-                echo '<td style="' . $color . '">$' . number_format($valor, 2) . '</td>';
+                $estilo = $valor > 0 ? '' : 'color: #6c757d;';
+                echo '<td style="' . $estilo . '">$' . number_format($valor, 2) . '</td>';
             }
             
             // Total por producto
-            echo '<td style="background: #d4edda; font-weight: bold;">$' . number_format($totalProducto, 2) . '</td>';
+            echo '<td class="total">$' . number_format($totalProducto, 2) . '</td>';
             echo '</tr>';
         }
         
         // Fila de totales por vendedor
-        echo '<tr style="background: #f8f9fa; font-weight: bold;">';
-        echo '<td style="background: #155724; color: white;">TOTAL VENDEDOR</td>';
+        echo '<tr class="totales-fila">';
+        echo '<td class="total"><strong>TOTAL VENDEDOR</strong></td>';
         
         foreach ($totalesPorVendedor as $total) {
-            echo '<td style="background: #d4edda;">$' . number_format($total, 2) . '</td>';
+            echo '<td class="total"><strong>$' . number_format($total, 2) . '</strong></td>';
         }
         
         // Total general
-        echo '<td style="background: #1e3c72; color: white;">$' . number_format($totalGeneral, 2) . '</td>';
+        echo '<td class="total-general"><strong>$' . number_format($totalGeneral, 2) . '</strong></td>';
         echo '</tr>';
         ?>
     </table>
 </div>
-    <form method="POST" style="margin-top: 25px;">
-        <button type="submit" name="limpiar_datos" 
-                style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); width: auto; padding: 14px 35px;"
-                onclick="return confirm('¿Está seguro de limpiar todos los datos?')">
-                Limpiar Todos los Datos
-        </button>
-    </form>
-<?php
-// Limpiar datos
-if (isset($_POST['limpiar_datos'])) {
-    $_SESSION['ventas'] = array_fill(0, 5, array_fill(0, 4, 0));
-    $_SESSION['vendedores'] = [
-        1 => ['nombre' => '', 'apellido' => ''],
-        2 => ['nombre' => '', 'apellido' => ''],
-        3 => ['nombre' => '', 'apellido' => ''],
-        4 => ['nombre' => '', 'apellido' => '']
-    ];
-    
-    echo '<div>
-            <h2> Datos Limpiados</h2>
-          </div>';
-}
 
+<!-- Botón para limpiar datos -->
+<form method="POST">
+    <button type="submit" name="limpiar_datos" 
+            onclick="return confirm('¿Está seguro de limpiar todos los datos?')">
+            🗑️ Limpiar Todos los Datos
+    </button>
+</form>
+
+<?php
+// Navegación para volver al menú
 Navegacion::volverAlMenu();
 ?>
 </div>

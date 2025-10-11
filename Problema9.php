@@ -1,6 +1,7 @@
 <?php
 require_once 'Operaciones.php';
 require_once 'Navegacion.php';
+require_once 'validaciones.php'; // Incluir validaciones
 ?>
 
 <!DOCTYPE html>
@@ -13,23 +14,28 @@ require_once 'Navegacion.php';
 <body>
     <div class="container">
         <h2>Problema #9</h2>
-        <p>Calcular las 15 primeras potencias del número </p>
- <!-- Formulario HTML donde el usuario introduce un número -->
-    <form method="POST">
-        <label>Ingrese un número del 1 al 9:</label>
-        <input type="number" name="numero" min="1" max="9" required placeholder="Ej: 4">
-        <button type="submit">Calcular Potencias</button>
-    </form>
+        <p>🔢 Calculadora de Potencias</p>
+        
+        <!-- Formulario para ingresar el número -->
+        <form method="POST">
+            <label>Ingrese un número del 1 al 9:</label>
+            <input type="number" name="numero" min="1" max="9" required placeholder="Ej: 4">
+            <button type="submit">Calcular Potencias</button>
+        </form>
+
 <?php
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Convierte el valor enviado en un número entero (por seguridad)
-    $numero = intval($_POST['numero']);
+// Procesar cuando se envía el formulario
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $numeroInput = $_POST['numero'] ?? '';
     
-    if ($numero >= 1 && $numero <= 9) {
+    // Validar el número ingresado
+    if (validarEnteroEnRango($numeroInput, 1, 9)) {
+        $numero = intval($numeroInput);
+        
+        // Obtener las 15 primeras potencias
         $potencias = Operaciones::obtenerPotencias($numero, 15);
         
-
-     // Imprime la tabla con los resultados
+        // Mostrar tabla con resultados
         echo '<div class="container">
                 <h2>Las 15 Primeras Potencias de ' . $numero . '</h2>
                 <table>
@@ -37,23 +43,25 @@ require_once 'Navegacion.php';
                         <th>Expresión</th>
                         <th>Resultado</th>
                     </tr>';
-     // Recorre cada potencia calculada y muestra una fila por cada resultado   
+        
+        // Mostrar cada potencia en una fila de la tabla
         foreach ($potencias as $potencia) {
             echo '<tr>
-                    <td>' . $numero . ' <sup>' . $potencia['exponente'] . '</sup></td>
+                    <td>' . $numero . '<sup>' . $potencia['exponente'] . '</sup></td>
                     <td><strong>' . number_format($potencia['resultado'], 0) . '</strong></td>
                   </tr>';
         }
         
-     // Cierra la tabla HTML    
         echo '</table></div>';
     } else {
+        // Mostrar error si el número no es válido
         echo '<div>
                 <strong>❌ Error:</strong> El número debe estar entre 1 y 9.
               </div>';
     }
 }
 
+// Navegación para volver al menú
 Navegacion::volverAlMenu();
 ?>
 </div>
