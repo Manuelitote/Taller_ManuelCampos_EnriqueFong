@@ -1,6 +1,7 @@
 <?php
-require_once 'OperacionesMatematicas.php';
+require_once 'Operaciones.php';
 require_once 'Navegacion.php';
+require_once 'validaciones.php'; // Incluir archivo de validaciones
 ?>
 
 <!DOCTYPE html>
@@ -26,66 +27,91 @@ require_once 'Navegacion.php';
 
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $presupuestoTotal = floatval($_POST['presupuesto']);
+    // Validar y sanitizar la entrada usando funciones generales
+    $presupuestoInput = $_POST['presupuesto'] ?? '';
+    
+    // Sanitizar el input
+    $presupuestoInput = sanitizarNumero($presupuestoInput);
+    
+    // Validar usando funciones generales
+    if (validarDecimalPositivo($presupuestoInput) && validarNumeroPositivo($presupuestoInput)) {
+        $presupuestoTotal = floatval($presupuestoInput);
+        
+        // Llamar la función estática de la clase externa
+        $distribucion = Operaciones::calcularDistribucion($presupuestoTotal);
 
-    $distribucion = OperacionesMatematicas::calcularDistribucion($presupuestoTotal);
+        if ($distribucion) { 
+            // Imprimir la tabla con los resultados
+            echo '<div>
+                    <h2>Distribución del Presupuesto</h2>
+                    <p><strong>Presupuesto Total: $' . number_format($presupuestoTotal, 2) . '</strong></p>
+                    <table>
+                        <tr>
+                            <th>Área</th>
+                            <th>Porcentaje</th>
+                            <th>Presupuesto</th>
+                        </tr>';
 
-    if ($distribucion) {
-        echo '<div>
-                <h2>Distribución del Presupuesto</h2>
-                <p><strong>Presupuesto Total: $' . number_format($presupuestoTotal, 2) . '</strong></p>
-                <table>
-                    <tr>
-                        <th>Área</th>
-                        <th>Porcentaje</th>
-                        <th>Presupuesto</th>
+            $etiquetas = [];
+            $datos = [];
+            
+            // Recorrer cada resultado de la distribución
+            foreach ($distribucion as $item) {
+                // Sanitizar salida para prevenir XSS
+                $area = sanitizarTexto($item["area"]);
+                $porcentaje = sanitizarTexto($item["porcentaje"]);
+                $presupuesto = number_format($item["presupuesto"], 2);
+                
+                $etiquetas[] = $area;
+                $datos[] = $item["presupuesto"];
+                
+                echo '<tr>
+                        <td>' . $area . '</td>
+                        <td>' . $porcentaje . '%</td>
+                        <td>$' . $presupuesto . '</td>
                     </tr>';
+            }
 
-        $etiquetas = [];
-        $datos = [];
-        foreach ($distribucion as $item) {
-            $etiquetas[] = $item["area"];
-            $datos[] = $item["presupuesto"];
-            echo '<tr>
-                    <td>' . $item["area"] . '</td>
-                    <td>' . $item["porcentaje"] . '%</td>
-                    <td>$' . number_format($item["presupuesto"], 2) . '</td>
-                </tr>';
-        }
+            echo '  </table>
+                </div>';
 
-        echo '  </table>
-            </div>';
-
-        // === Gráfico de pastel con Chart.js ===
-        echo '<div style="text-align: center; margin: 30px 0;">
-                <canvas id="graficoPresupuesto" width="400" height="400"></canvas>
-            </div>';
-        echo "<script>
-                const contexto = document.getElementById('graficoPresupuesto').getContext('2d');
-                new Chart(contexto, {
-                    type: 'pie',
-                    data: {
-                        labels: " . json_encode($etiquetas) . ",
-                        datasets: [{
-                            label: 'Distribución del Presupuesto',
-                            data: " . json_encode($datos) . ",
-                            backgroundColor: ['#FF6B6B','#4ECDC4','#45B7D1']
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'bottom'
+            // === Gráfico de pastel con Chart.js ===
+            echo '<div style="text-align: center; margin: 30px 0;">
+                    <canvas id="graficoPresupuesto" width="400" height="400"></canvas>
+                </div>';
+                
+            echo "<script>
+                    const contexto = document.getElementById('graficoPresupuesto').getContext('2d');
+                    new Chart(contexto, {
+                        type: 'pie',
+                        data: {
+                            labels: " . json_encode($etiquetas) . ",
+                            datasets: [{
+                                label: 'Distribución del Presupuesto',
+                                data: " . json_encode($datos) . ",
+                                backgroundColor: ['#FF6B6B','#4ECDC4','#45B7D1']
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                }
                             }
                         }
-                    }
-                });
-            </script>";
+                    });
+                </script>";
+        } else {
+            echo '<div class="error-box">
+                    <strong>❌ Error:</strong> Error al calcular la distribución.
+                  </div>';
+        }
     } else {
-        echo '<div>
-                <strong>❌ Error:</strong> Ingrese un presupuesto válido mayor a 0.
-            </div>';
+        echo '<div class="error-box">
+                <strong>❌ Error:</strong> Ingrese un presupuesto válido mayor a 0. 
+                <br><small>Formato aceptado: números positivos con máximo 2 decimales (ej: 500000 o 500000.50)</small>
+              </div>';
     }
 }
 ?>

@@ -1,5 +1,5 @@
 <?php
-class CalculadoraEstaciones
+class Estaciones
 { 
     public static function obtenerEstacion($mes, $dia)
     {
