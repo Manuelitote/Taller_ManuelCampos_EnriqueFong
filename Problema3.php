@@ -1,7 +1,7 @@
 <?php
 require_once 'validaciones.php'; // Incluye funciones de validación 
 require_once 'Navegacion.php';
-require_once 'OperacionesMatematicas.php'; // 🔹 Incluimos la clase
+require_once 'Operaciones.php';
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -30,7 +30,7 @@ if (isset($_POST['calcular'])) {
     } else {
         echo "<h3>Resultados:</h3>";
         // 🔹 Llamada al método dentro de la clase
-        $multiplos = OperacionesMatematicas::obtenerMultiplosDeCuatro($n);
+        $multiplos = Operaciones::obtenerMultiplosDeCuatro($n);
 
         // 🔹 Muestra los resultados igual que antes
         foreach ($multiplos as $dato) {

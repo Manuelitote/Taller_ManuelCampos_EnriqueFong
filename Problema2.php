@@ -1,7 +1,7 @@
 <?php
 require_once 'validaciones.php'; // Incluye las funciones de validación
 require_once 'Navegacion.php';
-require_once 'OperacionesMatematicas.php'; // 🔹 Incluimos la clase con la nueva función
+require_once 'Operaciones.php'; 
 ?>
 <!DOCTYPE html> 
 <html lang="es">
@@ -24,7 +24,7 @@ require_once 'OperacionesMatematicas.php'; // 🔹 Incluimos la clase con la nue
 // Ejecuta el cálculo al presionar el botón
 if (isset($_POST['calcular'])) {
     // 🔹 Se llama a la función dentro de la clase
-    $suma = OperacionesMatematicas::sumarHastaMil();
+    $suma = Operaciones::sumarHastaMil();
 
     // Muestra el resultado
     echo "<h3>Resultado:</h3> La suma de los números del 1 al 1000 es: <strong>$suma</strong>";

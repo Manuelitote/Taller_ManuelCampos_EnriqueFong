@@ -1,6 +1,6 @@
 <?php
 require_once 'Navegacion.php';
-require_once 'OperacionesMatematicas.php'; // 🔹 Se incluye la clase
+require_once 'Operaciones.php'; 
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -23,7 +23,7 @@ require_once 'OperacionesMatematicas.php'; // 🔹 Se incluye la clase
 // Ejecuta el cálculo al presionar el botón
 if (isset($_POST['calcular'])) {
     // 🔹 Llamada al método de la clase
-    $resultado = OperacionesMatematicas::sumarParesEImpares();
+    $resultado = Operaciones::sumarParesEImpares();
 
     // 🔹 Muestra los resultados
     echo "<h3>Resultados:</h3>";
