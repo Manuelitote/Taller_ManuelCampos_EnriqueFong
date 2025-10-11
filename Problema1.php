@@ -1,6 +1,8 @@
 <?php
 require_once 'Navegacion.php';
+require_once 'validaciones.php';
 require_once 'Estadistica.php'?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
