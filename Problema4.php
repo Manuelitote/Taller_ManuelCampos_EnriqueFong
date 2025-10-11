@@ -1,4 +1,7 @@
-<?php require_once 'Navegacion.php';?>
+<?php
+require_once 'Navegacion.php';
+require_once 'OperacionesMatematicas.php'; // 🔹 Se incluye la clase
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -19,17 +22,15 @@
 <?php
 // Ejecuta el cálculo al presionar el botón
 if (isset($_POST['calcular'])) {
-    $sumaPares = 0;
-    $sumaImpares = 0;
-    for ($i = 1; $i <= 200; $i++) {
-        if ($i % 2 == 0) $sumaPares += $i; // Suma pares
-        else $sumaImpares += $i;           // Suma impares
-    }
-    // Muestra los resultados
+    // 🔹 Llamada al método de la clase
+    $resultado = OperacionesMatematicas::sumarParesEImpares();
+
+    // 🔹 Muestra los resultados
     echo "<h3>Resultados:</h3>";
-    echo "Suma de pares: $sumaPares<br>";
-    echo "Suma de impares: $sumaImpares<br>";
+    echo "Suma de pares: {$resultado['pares']}<br>";
+    echo "Suma de impares: {$resultado['impares']}<br>";
 }
+
 Navegacion::volverAlMenu();
 ?>
 </div>

@@ -7,7 +7,7 @@ require_once 'Navegacion.php';
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Problema 5</title>
+    <title>Problema 7</title>
     <link rel="stylesheet" href="estilo.css">
     <!-- Agregamos Chart.js para la gráfica -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

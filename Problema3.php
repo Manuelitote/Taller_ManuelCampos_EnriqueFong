@@ -1,5 +1,8 @@
-<?php require_once 'validaciones.php'; // Incluye funciones de validación 
-require_once 'Navegacion.php';?>
+<?php
+require_once 'validaciones.php'; // Incluye funciones de validación 
+require_once 'Navegacion.php';
+require_once 'OperacionesMatematicas.php'; // 🔹 Incluimos la clase
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -26,9 +29,12 @@ if (isset($_POST['calcular'])) {
         echo "<p style='color:red;'>Ingrese un número positivo.</p>";
     } else {
         echo "<h3>Resultados:</h3>";
-        // Imprime los múltiplos de 4
-        for ($i = 1; $i <= $n; $i++) {
-            echo "4 × $i = " . (4 * $i) . "<br>";
+        // 🔹 Llamada al método dentro de la clase
+        $multiplos = OperacionesMatematicas::obtenerMultiplosDeCuatro($n);
+
+        // 🔹 Muestra los resultados igual que antes
+        foreach ($multiplos as $dato) {
+            echo "4 × {$dato['multiplo']} = {$dato['resultado']}<br>";
         }
     }
 }

@@ -1,6 +1,7 @@
 <?php  
-require_once 'Navegacion.php';
-require_once 'validaciones.php'; 
+require_once __DIR__ . '/Navegacion.php';
+require_once __DIR__ . '/validaciones.php'; 
+require_once __DIR__ . '/Estadistica.php'; // Clase con el método clasificarEdades
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -8,7 +9,6 @@ require_once 'validaciones.php';
     <meta charset="UTF-8">
     <title>Problema 5</title>
     <link rel="stylesheet" href="estilo.css">
-    <!-- Agregamos Chart.js para la gráfica -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -25,10 +25,9 @@ require_once 'validaciones.php';
 
 <?php
 if (isset($_POST['procesar'])) {
-    $categorias = ["Niño" => 0, "Adolescente" => 0, "Adulto" => 0, "Adulto mayor" => 0];
     $edades = [];
 
-    // Clasificación de edades 
+    // Leer edades del formulario
     for ($i=1; $i<=5; $i++) {
         $edad = $_POST["edad$i"];
         if (!validarNumeroNoNegativo($edad)) {
@@ -36,44 +35,28 @@ if (isset($_POST['procesar'])) {
             exit;
         }
         $edades[] = $edad;
-
-        switch (true) {
-            case ($edad <= 12):
-                $categorias["Niño"]++;
-                break;
-            case ($edad <= 17):
-                $categorias["Adolescente"]++;
-                break;
-            case ($edad <= 64):
-                $categorias["Adulto"]++;
-                break;
-            default:
-                $categorias["Adulto mayor"]++;
-                break;
-        }
     }
 
-    // Muestra resultados por categoría
+    // 🔹 Usar la clase Estadisticas
+    $resultado = Estadisticas::clasificarEdades($edades);
+    $categorias = $resultado['categorias'];
+    $repetidos = $resultado['repetidos'];
+
+    // Mostrar resultados
     echo "<h3>Resultados:</h3>";
     foreach ($categorias as $tipo => $cantidad) {
         echo "$tipo: $cantidad<br>";
     }
 
-    // Verifica si hay edades repetidas
-    if (count($edades) !== count(array_unique($edades))) {
+    if (!empty($repetidos)) {
         echo "<br><strong>Nota:</strong> Hay edades repetidas.<br>";
-
-        // Estadísticas adicionales si hay repetidos
-        $repetidos = array_count_values($edades);
         echo "<strong>Frecuencia de edades:</strong><br>";
         foreach ($repetidos as $edad => $cantidad) {
-            if ($cantidad > 1) {
-                echo "Edad $edad: $cantidad veces<br>";
-            }
+            echo "Edad $edad: $cantidad veces<br>";
         }
     }
 
-    // Generar gráfica con Chart.js
+    // Gráfica con Chart.js
     $categorias_json = json_encode(array_keys($categorias));
     $valores_json = json_encode(array_values($categorias));
     echo '<canvas id="graficaEdades" width="400" height="200"></canvas>';
@@ -102,6 +85,6 @@ if (isset($_POST['procesar'])) {
 Navegacion::volverAlMenu();
 ?>
 </div>
-<?php include 'footer.php'; ?>
+<?php include __DIR__ . '/footer.php'; ?>
 </body>
 </html>

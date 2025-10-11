@@ -30,17 +30,39 @@ class Estadisticas
         return max($numeros);
     }
     
-    public static function clasificarPorEdad($edad)
+    // Problema 5
+    public static function clasificarEdades(array $edades)
     {
-        if ($edad >= 0 && $edad <= 12) {
-            return 'Niño';
-        } elseif ($edad >= 13 && $edad <= 17) {
-            return 'Adolescente';
-        } elseif ($edad >= 18 && $edad <= 64) {
-            return 'Adulto';
-        } elseif ($edad >= 65) {
-            return 'Adulto Mayor';
+        $categorias = ["Niño" => 0, "Adolescente" => 0, "Adulto" => 0, "Adulto Mayor" => 0];
+
+        foreach ($edades as $edad) {
+            switch (true) {
+                case ($edad >= 0 && $edad <= 12):
+                    $categorias["Niño"]++;
+                    break;
+                case ($edad >= 13 && $edad <= 17):
+                    $categorias["Adolescente"]++;
+                    break;
+                case ($edad >= 18 && $edad <= 64):
+                    $categorias["Adulto"]++;
+                    break;
+                case ($edad >= 65):
+                    $categorias["Adulto Mayor"]++;
+                    break;
+            }
         }
-        return 'Edad inválida';
+
+        // Repetidos
+        $repetidos = array_count_values($edades);
+        foreach ($repetidos as $edad => $cantidad) {
+            if ($cantidad <= 1) {
+                unset($repetidos[$edad]);
+            }
+        }
+
+        return [
+            'categorias' => $categorias,
+            'repetidos' => $repetidos
+        ];
     }
 }

@@ -20,7 +20,6 @@ class OperacionesMatematicas
             return null;
         }
 
-        // Porcentajes fijos
         $distribucion = [
             "Ginecología"   => 40,
             "Traumatología" => 35,
@@ -37,5 +36,49 @@ class OperacionesMatematicas
         }
 
         return $resultado;
+    }
+
+    // Problema 2
+    public static function sumarHastaMil()
+    {
+        $suma = 0;
+        for ($i = 1; $i <= 1000; $i++) {
+            $suma += $i;
+        }
+        return $suma;
+    }
+
+    // Problema 3
+    public static function obtenerMultiplosDeCuatro($n)
+    {
+        $multiplos = [];
+        for ($i = 1; $i <= $n; $i++) {
+            $multiplos[] = [
+                'multiplo' => $i,
+                'resultado' => 4 * $i
+            ];
+        }
+        return $multiplos;
+    }
+
+    // Problema 4
+    public static function sumarParesEImpares()
+    {
+        $sumaPares = 0;
+        $sumaImpares = 0;
+
+        for ($i = 1; $i <= 200; $i++) {
+            if ($i % 2 == 0) {
+                $sumaPares += $i;
+            } else {
+                $sumaImpares += $i;
+            }
+        }
+
+    // Retorna ambos resultados 
+        return [
+            'pares' => $sumaPares,
+            'impares' => $sumaImpares
+        ];
     }
 }
