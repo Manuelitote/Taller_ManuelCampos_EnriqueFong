@@ -9,42 +9,11 @@ function validarNumeroPositivo($num) {
     return is_numeric($num) && $num > 0;
 }
 
-// Validar presupuesto (número positivo con máximo 2 decimales)
-function validarPresupuesto($presupuesto) {
-    // Verificar que sea numérico y positivo
-    if (!is_numeric($presupuesto) || $presupuesto <= 0) {
-        return false;
-    }
-    
-    // Verificar formato con preg_match (permite hasta 2 decimales)
-    if (!preg_match('/^\d+(\.\d{1,2})?$/', (string)$presupuesto)) {
-        return false;
-    }
-    
-    // Validar rango razonable (opcional - máximo 1 billón)
-    if ($presupuesto > 1000000000000) {
-        return false;
-    }
-    
-    return true;
-}
-
 // Sanitizar entrada numérica
 function sanitizarNumero($input) {
     $input = trim($input);
     $input = htmlspecialchars($input, ENT_QUOTES, 'UTF-8');
     return $input;
-}
-
-// Sanitizar y validar entrada completa para presupuesto
-function procesarEntradaPresupuesto($input) {
-    $input = sanitizarNumero($input);
-    
-    if (validarPresupuesto($input)) {
-        return floatval($input);
-    }
-    
-    return false;
 }
 
 // Validar número entero en un rango específico

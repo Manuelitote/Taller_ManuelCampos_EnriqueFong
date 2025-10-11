@@ -27,15 +27,21 @@ require_once 'validaciones.php'; // Incluir archivo de validaciones
 
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Validar y sanitizar la entrada
+    // Validar y sanitizar la entrada usando funciones generales
     $presupuestoInput = $_POST['presupuesto'] ?? '';
-    $presupuestoTotal = procesarEntradaPresupuesto($presupuestoInput);
     
-    if ($presupuestoTotal !== false) {
-        // Llama la funcion estática de la clase externa
+    // Sanitizar el input
+    $presupuestoInput = sanitizarNumero($presupuestoInput);
+    
+    // Validar usando funciones generales
+    if (validarDecimalPositivo($presupuestoInput) && validarNumeroPositivo($presupuestoInput)) {
+        $presupuestoTotal = floatval($presupuestoInput);
+        
+        // Llamar la función estática de la clase externa
         $distribucion = Operaciones::calcularDistribucion($presupuestoTotal);
 
-        if ($distribucion) { // Imprime la tabla con los resultados
+        if ($distribucion) { 
+            // Imprimir la tabla con los resultados
             echo '<div>
                     <h2>Distribución del Presupuesto</h2>
                     <p><strong>Presupuesto Total: $' . number_format($presupuestoTotal, 2) . '</strong></p>
@@ -47,15 +53,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </tr>';
 
             $etiquetas = [];
-            $datos = []; // Recorre con foreach cada resultado de la distribución
+            $datos = [];
+            
+            // Recorrer cada resultado de la distribución
             foreach ($distribucion as $item) {
                 // Sanitizar salida para prevenir XSS
-                $area = htmlspecialchars($item["area"], ENT_QUOTES, 'UTF-8');
-                $porcentaje = htmlspecialchars($item["porcentaje"], ENT_QUOTES, 'UTF-8');
+                $area = sanitizarTexto($item["area"]);
+                $porcentaje = sanitizarTexto($item["porcentaje"]);
                 $presupuesto = number_format($item["presupuesto"], 2);
                 
                 $etiquetas[] = $area;
                 $datos[] = $item["presupuesto"];
+                
                 echo '<tr>
                         <td>' . $area . '</td>
                         <td>' . $porcentaje . '%</td>
@@ -70,6 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo '<div style="text-align: center; margin: 30px 0;">
                     <canvas id="graficoPresupuesto" width="400" height="400"></canvas>
                 </div>';
+                
             echo "<script>
                     const contexto = document.getElementById('graficoPresupuesto').getContext('2d');
                     new Chart(contexto, {
@@ -93,15 +103,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     });
                 </script>";
         } else {
-            echo '<div>
+            echo '<div class="error-box">
                     <strong>❌ Error:</strong> Error al calcular la distribución.
-                </div>';
+                  </div>';
         }
     } else {
-        echo '<div>
+        echo '<div class="error-box">
                 <strong>❌ Error:</strong> Ingrese un presupuesto válido mayor a 0. 
                 <br><small>Formato aceptado: números positivos con máximo 2 decimales (ej: 500000 o 500000.50)</small>
-            </div>';
+              </div>';
     }
 }
 ?>
