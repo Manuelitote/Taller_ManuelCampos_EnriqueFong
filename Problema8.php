@@ -43,7 +43,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             5 => 'Mayo', 6 => 'Junio', 7 => 'Julio', 8 => 'Agosto',
             9 => 'Septiembre', 10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
         ];
-        
+
+        // Definir imágenes para cada estación
+        $imagenesEstaciones = [
+            'Primavera' => 'https://concepto.de/wp-content/uploads/2018/08/Campos-de-mariposas-en-Israel-scaled-e1730740971423.jpg',
+            'Verano' => 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=300&h=200&fit=crop',
+            'Otoño' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKQoKnpZKZswDAKxsVBwSvqay9N1empGd2ug&s',
+            'Invierno' => 'https://images.unsplash.com/photo-1483664852095-d6cc6870702d?w=300&h=200&fit=crop'
+        ];
+
         // Mostrar resultado
         echo '<div class="container">
                 <h2>🌍 Resultado</h2>
@@ -54,16 +62,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="resultado-item destacado">
                     <span>Estación del Año:</span>
                     <span><strong>' . sanitizarTexto($estacion) . '</strong></span>
-                </div>
-              </div>';
+                </div>';
+                        // Mostrar imagen de la estación
+        if (isset($imagenesEstaciones[$estacion])) {
+            echo '<img src="' . $imagenesEstaciones[$estacion] . '" 
+                    alt="' . $estacion . '" 
+                    class="estacion-imagen"
+                    title="Estación: ' . $estacion . '">';
+            echo '</div>';
+        }
     } else {
         // Mostrar error si la fecha no es válida
         echo '<div>
                 <strong>❌ Error:</strong> La fecha ingresada no es válida.
-              </div>';
+            </div>';
     }
 }
-
 // Navegación para volver al menú
 Navegacion::volverAlMenu();
 ?>
