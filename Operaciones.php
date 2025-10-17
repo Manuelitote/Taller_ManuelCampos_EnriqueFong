@@ -81,4 +81,42 @@ class Operaciones
             'impares' => $sumaImpares
         ];
     }
+    // Función para procesar matriz de ventas (Problema 10)
+    public static function procesarMatrizVentas($matrizVentas, $vendedores) {
+        $resultado = [
+            'matriz' => [],
+            'totalesVendedores' => [0, 0, 0, 0],
+            'totalGeneral' => 0,
+            'nombresVendedores' => []
+        ];
+        
+        // Preparar nombres cortos de vendedores
+        for ($i = 1; $i <= 4; $i++) {
+            $vendedor = $vendedores[$i];
+            $nombreCorto = substr($vendedor['nombre'], 0, 1) . '. ' . $vendedor['apellido'];
+            $resultado['nombresVendedores'][] = $nombreCorto;
+        }
+        
+        // Procesar cada producto
+        for ($producto = 0; $producto < 5; $producto++) {
+            $fila = [
+                'producto' => $producto + 1,
+                'ventas' => [],
+                'totalProducto' => 0
+            ];
+            
+            // Procesar cada vendedor
+            for ($vendedor = 0; $vendedor < 4; $vendedor++) {
+                $valor = $matrizVentas[$producto][$vendedor];
+                $fila['ventas'][] = $valor;
+                $fila['totalProducto'] += $valor;
+                $resultado['totalesVendedores'][$vendedor] += $valor;
+                $resultado['totalGeneral'] += $valor;
+            }
+            
+            $resultado['matriz'][] = $fila;
+        }
+        
+        return $resultado;
+    }
 }

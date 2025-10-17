@@ -1,6 +1,7 @@
 <?php
 require_once 'Navegacion.php';
 require_once 'validaciones.php'; // Incluir validaciones
+require_once 'Operaciones.php'; // Clase con método procesarMatrizVentas
 session_start(); // Iniciar sesión para almacenar datos
 ?>
 
@@ -165,45 +166,36 @@ if (isset($_POST['limpiar_datos'])) {
 <!-- Tabla de Ventas (Matriz Bidimensional) con nombres de vendedores -->
 <div>
     <h3>📊 Matriz de Ventas del Mes</h3>    
+    <?php
+    // Procesar la matriz usando la función estática
+    $resultadoMatriz = Operaciones::procesarMatrizVentas($_SESSION['ventas'], $_SESSION['vendedores']);
+    ?>
     <table class="ventas-table">
         <tr>
             <th>Producto / Vendedor</th>
             <?php
-            // Encabezados con nombres de vendedores
-            for ($i = 1; $i <= 4; $i++) {
-                $vendedor = $_SESSION['vendedores'][$i];
-                $nombreCorto = substr($vendedor['nombre'], 0, 1) . '. ' . $vendedor['apellido'];
-                echo '<th>' . sanitizarTexto($nombreCorto) . '</th>';
+            // Encabezados con nombres de vendedores desde el resultado procesado
+            foreach ($resultadoMatriz['nombresVendedores'] as $nombreVendedor) {
+                echo '<th>' . sanitizarTexto($nombreVendedor) . '</th>';
             }
             ?>
             <th class="total">TOTAL PRODUCTO</th>
         </tr>
         
         <?php
-        $ventas = $_SESSION['ventas'];
-        $totalesPorVendedor = [0, 0, 0, 0];
-        $totalGeneral = 0;
-        
-        // Recorrer productos (filas)
-        for ($producto = 0; $producto < 5; $producto++) {
+        // Mostrar cada fila de producto usando los datos procesados
+        foreach ($resultadoMatriz['matriz'] as $fila) {
             echo '<tr>';
-            echo '<td><strong>Producto ' . ($producto + 1) . '</strong></td>';
+            echo '<td><strong>Producto ' . $fila['producto'] . '</strong></td>';
             
-            $totalProducto = 0;
-            
-            // Recorrer vendedores (columnas)
-            for ($vendedor = 0; $vendedor < 4; $vendedor++) {
-                $valor = $ventas[$producto][$vendedor];
-                $totalProducto += $valor;
-                $totalesPorVendedor[$vendedor] += $valor;
-                $totalGeneral += $valor;
-                
-                $estilo = $valor > 0 ? '' : 'color: #6c757d;';
-                echo '<td style="' . $estilo . '">$' . number_format($valor, 2) . '</td>';
+            // Mostrar ventas por vendedor
+            foreach ($fila['ventas'] as $venta) {
+                $estilo = $venta > 0 ? '' : 'color: #6c757d;';
+                echo '<td style="' . $estilo . '">$' . number_format($venta, 2) . '</td>';
             }
             
             // Total por producto
-            echo '<td class="total">$' . number_format($totalProducto, 2) . '</td>';
+            echo '<td class="total">$' . number_format($fila['totalProducto'], 2) . '</td>';
             echo '</tr>';
         }
         
@@ -211,12 +203,12 @@ if (isset($_POST['limpiar_datos'])) {
         echo '<tr class="totales-fila">';
         echo '<td class="total"><strong>TOTAL VENDEDOR</strong></td>';
         
-        foreach ($totalesPorVendedor as $total) {
+        foreach ($resultadoMatriz['totalesVendedores'] as $total) {
             echo '<td class="total"><strong>$' . number_format($total, 2) . '</strong></td>';
         }
         
         // Total general
-        echo '<td class="total-general"><strong>$' . number_format($totalGeneral, 2) . '</strong></td>';
+        echo '<td class="total-general"><strong>$' . number_format($resultadoMatriz['totalGeneral'], 2) . '</strong></td>';
         echo '</tr>';
         ?>
     </table>
